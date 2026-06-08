@@ -22,21 +22,18 @@ const server = http.createServer(async (req, res) => {
             requested_url: req.url,
             requested_method: req.method  
         },null, 2));
-    } else if (req.url === "/about") {
-        res.setHeader("Content-Type", "application/json");  
-        res.statusCode = 200;
-        res.end(JSON.stringify({
-            success: true,
-            message: "This is the About Page!",
-            requested_url: req.url  
-        },null, 2));
-    } else if (req.url === "/contact") {
+    } else if (req.url.startsWith("/api/continent/") && req.method === "GET") {
+        const continent = req.url.split("/").pop();
+        const filteredData = destinationsData.filter(dest => {
+            return dest.continent.toLowerCase() === continent.toLowerCase();
+        });
         res.setHeader("Content-Type", "application/json");
         res.statusCode = 200;
         res.end(JSON.stringify({
             success: true,
-            message: "This is the Contact Page!",
-            requested_url: req.url
+            data: filteredData,
+            requested_url: req.url,
+            requested_method: req.method  
         },null, 2));
     } else {
         res.writeHead(404, {
